@@ -5,7 +5,9 @@ import com.chatroom.client.view.main.ChatRoomGUI;
 public class Main {
 
     public static void main(String[] args) {
-        ChatRoomGUI gui = new ChatRoomGUI(System.out::println);
+        ChatRoomGUI.initGUI(message ->
+                ChatRoomGUI.getGUI().addNewMessage(ChatRoomGUI.getGUI().getName(), message));
+        ChatRoomGUI gui = ChatRoomGUI.getGUI();
         gui.setVisible(true);
         gui.addNewParticipant("Morteza");
         gui.addNewParticipant("Ali");

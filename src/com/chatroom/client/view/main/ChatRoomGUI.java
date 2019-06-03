@@ -1,10 +1,12 @@
 package com.chatroom.client.view.main;
 
+import javafx.scene.control.ScrollPane;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.regex.Pattern;
 
-public class ChatRoomGUI extends JFrame {
+public final class ChatRoomGUI extends JFrame {
     private final String TITLE = "ChatRoom";
     private final int WIDTH = 500, HEIGHT = 500;
     private static final String IPADDRESS_PATTERN =
@@ -17,7 +19,9 @@ public class ChatRoomGUI extends JFrame {
     private LeftLayout leftLayout;
     private BottomLayout bottomLayout;
 
-    public ChatRoomGUI(NewMessageListener newMessageListener) throws HeadlessException {
+    private static ChatRoomGUI gui;
+
+    private ChatRoomGUI(NewMessageListener newMessageListener) throws HeadlessException {
         super();
 
         //for better experience
@@ -28,6 +32,15 @@ public class ChatRoomGUI extends JFrame {
         setupGUI();
 
         setNewMessageListener(newMessageListener);
+    }
+
+    public static void initGUI(NewMessageListener newMessageListener) {
+        if (gui == null)
+            gui = new ChatRoomGUI(newMessageListener);
+    }
+
+    public static ChatRoomGUI getGUI() {
+        return gui;
     }
 
     public void addNewMessage(String username, String massage) {
@@ -42,7 +55,7 @@ public class ChatRoomGUI extends JFrame {
         leftLayout.removeUser(username);
     }
 
-    public void setNewMessageListener(NewMessageListener newMessageListener) {
+    private void setNewMessageListener(NewMessageListener newMessageListener) {
         bottomLayout.setNewMessageListener(newMessageListener);
     }
 
@@ -55,7 +68,7 @@ public class ChatRoomGUI extends JFrame {
         this.setResizable(false);
 
         chatArea = new ChatArea();
-        this.add(chatArea, BorderLayout.CENTER);
+        this.add(new JScrollPane(chatArea), BorderLayout.CENTER);
 
         this.add(leftLayout = new LeftLayout(), BorderLayout.LINE_START);
 
