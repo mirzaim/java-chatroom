@@ -1,4 +1,4 @@
-package com.chatroom.client.view.main;
+package com.chatroom.client;
 
 public interface NewMessageListener {
     void newMessage(String message);

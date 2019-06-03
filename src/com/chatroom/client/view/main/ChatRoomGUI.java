@@ -1,6 +1,6 @@
 package com.chatroom.client.view.main;
 
-import javafx.scene.control.ScrollPane;
+import com.chatroom.client.NewMessageListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +21,10 @@ public final class ChatRoomGUI extends JFrame {
 
     private static ChatRoomGUI gui;
 
-    private ChatRoomGUI(NewMessageListener newMessageListener) throws HeadlessException {
+    private String username;
+    private String ipAddress;
+
+    private ChatRoomGUI() throws HeadlessException {
         super();
 
         //for better experience
@@ -30,13 +33,19 @@ public final class ChatRoomGUI extends JFrame {
         getUserData();
 
         setupGUI();
+    }
+
+    private ChatRoomGUI(NewMessageListener newMessageListener) throws HeadlessException {
+        this();
 
         setNewMessageListener(newMessageListener);
     }
 
-    public static void initGUI(NewMessageListener newMessageListener) {
+
+
+    public static void initGUI() {
         if (gui == null)
-            gui = new ChatRoomGUI(newMessageListener);
+            gui = new ChatRoomGUI();
     }
 
     public static ChatRoomGUI getGUI() {
@@ -55,7 +64,7 @@ public final class ChatRoomGUI extends JFrame {
         leftLayout.removeUser(username);
     }
 
-    private void setNewMessageListener(NewMessageListener newMessageListener) {
+    public void setNewMessageListener(NewMessageListener newMessageListener) {
         bottomLayout.setNewMessageListener(newMessageListener);
     }
 
@@ -99,6 +108,8 @@ public final class ChatRoomGUI extends JFrame {
                 closeApplication();
         }
 
+        username = userData.getUserName();
+        ipAddress = userData.getIP();
     }
 
     private boolean isInputDataProper(UsernameFrame frame) {
@@ -109,5 +120,13 @@ public final class ChatRoomGUI extends JFrame {
 
     private void closeApplication() {
         System.exit(0);
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
     }
 }

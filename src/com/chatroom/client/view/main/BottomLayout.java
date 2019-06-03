@@ -1,6 +1,8 @@
 package com.chatroom.client.view.main;
 
 
+import com.chatroom.client.NewMessageListener;
+
 import javax.swing.*;
 import java.awt.*;
 
