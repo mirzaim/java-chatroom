@@ -9,9 +9,9 @@ class BottomLayout extends JPanel {
     private JTextField messageField;
     private JButton sendButton;
 
-    BottomLayout(GUIListener parent) {
+    BottomLayout(GUIListener listener) {
         super(new BorderLayout());
-        this.listener = parent;
+        this.listener = listener;
 
         messageField = new JTextField();
         this.add(messageField, BorderLayout.CENTER);

@@ -1,7 +1,5 @@
 package com.chatroom.client.view.main;
 
-import com.chatroom.client.NewMessageListener;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -21,8 +19,9 @@ public final class ChatRoomGUI extends JFrame {
 
     private GUIListener guiListener;
 
-    private ChatRoomGUI() throws HeadlessException {
+    private ChatRoomGUI(GUIListener guiListener) throws HeadlessException {
         super();
+        this.guiListener = guiListener;
 
         //for better experience
         setLookAndFeel();
@@ -31,12 +30,6 @@ public final class ChatRoomGUI extends JFrame {
 
         getUserData();
 
-    }
-
-    private ChatRoomGUI(GUIListener guiListener) throws HeadlessException {
-        this();
-
-        this.guiListener = guiListener;
     }
 
 
@@ -125,6 +118,11 @@ public final class ChatRoomGUI extends JFrame {
     }
 
     private void closeApplication() {
+        try {
+            guiListener.closeWindowFunc();
+        } catch (Exception ignored) {
+        }
+
         System.exit(0);
     }
 
@@ -139,11 +137,6 @@ public final class ChatRoomGUI extends JFrame {
     public void showErrorAndExit(String message) {
         message += "\nTry again later!";
         JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
-
-        try {
-            guiListener.closeWindowFunc();
-        } catch (Exception ignored) {
-        }
 
         closeApplication();
     }

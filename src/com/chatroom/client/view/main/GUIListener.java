@@ -17,7 +17,7 @@ public interface GUIListener {
     void newMessage(String message);
 
     /**
-     * This method invokes when main GUI close button pressed.
+     * This method tried to invoke when application is closing.
      */
     void closeWindowFunc();
 }
