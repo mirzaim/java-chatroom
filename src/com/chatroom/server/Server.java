@@ -32,7 +32,7 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
-        while (flag) {
+        while (flag)
             try {
                 Socket socket = serverSocket.accept();
                 ClientHandler client = new ClientHandler(socket);
@@ -43,7 +43,6 @@ public class Server implements Runnable {
                 if (!serverSocket.isClosed())
                     e.printStackTrace();
             }
-        }
     }
 
     public void closeServer() {
@@ -98,7 +97,6 @@ public class Server implements Runnable {
                 try {
                     String message = in.readUTF();
                     if (message.equals("CLOSE_CONNECTION")) {
-                        sendMessage(message);
                         closeConnection();
                         clientHandlers.remove(this);
                         System.out.println(this + "closed Connection");
@@ -119,6 +117,7 @@ public class Server implements Runnable {
         }
 
         void closeConnection() throws IOException {
+            sendMessage("CLOSE_CONNECTION");
             listen = false;
             in.close();
             out.close();
