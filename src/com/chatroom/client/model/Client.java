@@ -24,7 +24,8 @@ public class Client {
     }
 
     public void close() {
-        serverListener.sendMessage("CLOSE_CONNECTION");
+        if (serverListener != null)
+            serverListener.sendMessage("CLOSE_CONNECTION");
     }
 
 
@@ -49,7 +50,7 @@ public class Client {
             while (listen) {
                 try {
                     String message = in.readUTF();
-                    if(message.equals("CLOSE_CONNECTION"))
+                    if (message.equals("CLOSE_CONNECTION"))
                         close();
                     messageListener.newMessage(message);
                 } catch (IOException e) {
