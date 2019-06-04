@@ -44,6 +44,6 @@ public class UsernameFrame extends JPanel {
 
     private void justForTesting() {
 //        nameTextField.setText("Morteza");
-        ipTextField.setText("192.168.1.1");
+        ipTextField.setText("172.24.26.139");
     }
 }
