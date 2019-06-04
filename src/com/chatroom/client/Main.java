@@ -2,33 +2,34 @@ package com.chatroom.client;
 
 import com.chatroom.client.model.Client;
 import com.chatroom.client.view.main.ChatRoomGUI;
+import com.chatroom.client.view.main.GUIListener;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 public class Main {
+    private static Client client;
+    private static ChatRoomGUI gui;
 
     public static void main(String[] args) {
-        ChatRoomGUI.initGUI();
-        ChatRoomGUI gui = ChatRoomGUI.getGUI();
+        ChatRoomGUI.initGUI(new GUIListener() {
+            @Override
+            public void newMessage(String message) {
+                client.sendMessage(message);
+            }
+
+            @Override
+            public void closeWindowFunc() {
+                client.close();
+            }
+        });
+
+        gui = ChatRoomGUI.getGUI();
 
         try {
-            Client client = new Client(gui.getIpAddress(), message -> gui.addNewMessage("me", message));
-            gui.setNewMessageListener(client::sendMessage);
-
-            gui.addWindowListener(new WindowAdapter() {
-                @Override
-                public void windowClosing(WindowEvent e) {
-                    super.windowClosing(e);
-                    client.close();
-                }
-            });
+            client = new Client(gui.getIpAddress(),
+                    message -> gui.addNewMessage("me", message));
         } catch (IOException e) {
-            e.printStackTrace();
+            gui.showErrorAndExit("Can't connect to server.");
         }
-
-
-
     }
 }

@@ -4,6 +4,8 @@ import com.chatroom.client.NewMessageListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 
 public final class ChatRoomGUI extends JFrame {
@@ -17,6 +19,8 @@ public final class ChatRoomGUI extends JFrame {
 
     private static ChatRoomGUI gui;
 
+    private GUIListener guiListener;
+
     private ChatRoomGUI() throws HeadlessException {
         super();
 
@@ -29,16 +33,16 @@ public final class ChatRoomGUI extends JFrame {
 
     }
 
-    private ChatRoomGUI(NewMessageListener newMessageListener) throws HeadlessException {
+    private ChatRoomGUI(GUIListener guiListener) throws HeadlessException {
         this();
 
-        setNewMessageListener(newMessageListener);
+        this.guiListener = guiListener;
     }
 
 
-    public static void initGUI() {
+    public static void initGUI(GUIListener guiListener) {
         if (gui == null)
-            gui = new ChatRoomGUI();
+            gui = new ChatRoomGUI(guiListener);
     }
 
     public static ChatRoomGUI getGUI() {
@@ -62,9 +66,6 @@ public final class ChatRoomGUI extends JFrame {
         leftLayout.removeUser(username);
     }
 
-    public void setNewMessageListener(NewMessageListener newMessageListener) {
-        bottomLayout.setNewMessageListener(newMessageListener);
-    }
 
     private void setupGUI() {
         this.setTitle(TITLE);
@@ -73,12 +74,19 @@ public final class ChatRoomGUI extends JFrame {
         this.setSize(new Dimension(WIDTH, HEIGHT));
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                guiListener.closeWindowFunc();
+
+            }
+        });
 
         this.add(new JScrollPane(chatArea = new ChatArea()), BorderLayout.CENTER);
 
         this.add(leftLayout = new LeftLayout(), BorderLayout.LINE_START);
 
-        this.add(bottomLayout = new BottomLayout(), BorderLayout.PAGE_END);
+        this.add(bottomLayout = new BottomLayout(guiListener), BorderLayout.PAGE_END);
 
         this.setVisible(true);
     }
@@ -126,5 +134,17 @@ public final class ChatRoomGUI extends JFrame {
 
     public String getIpAddress() {
         return userData.getIP();
+    }
+
+    public void showErrorAndExit(String message) {
+        message += "\nTry again later!";
+        JOptionPane.showMessageDialog(this, message, "Error", JOptionPane.ERROR_MESSAGE);
+
+        try {
+            guiListener.closeWindowFunc();
+        } catch (Exception ignored) {
+        }
+
+        closeApplication();
     }
 }

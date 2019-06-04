@@ -1,20 +1,17 @@
 package com.chatroom.client.view.main;
 
-
-import com.chatroom.client.NewMessageListener;
-
 import javax.swing.*;
 import java.awt.*;
 
 
 class BottomLayout extends JPanel {
+    private GUIListener listener;
     private JTextField messageField;
     private JButton sendButton;
-    private NewMessageListener newMessageListener;
 
-
-    BottomLayout() {
+    BottomLayout(GUIListener parent) {
         super(new BorderLayout());
+        this.listener = parent;
 
         messageField = new JTextField();
         this.add(messageField, BorderLayout.CENTER);
@@ -27,11 +24,7 @@ class BottomLayout extends JPanel {
 
     private void sendMessage() {
         if (!messageField.getText().isEmpty())
-            newMessageListener.newMessage(messageField.getText());
+            listener.newMessage(messageField.getText());
         messageField.setText("");
-    }
-
-    void setNewMessageListener(NewMessageListener newMessageListener) {
-        this.newMessageListener = newMessageListener;
     }
 }
