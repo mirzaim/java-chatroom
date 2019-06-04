@@ -2,8 +2,8 @@ package com.chatroom.client.view.main;
 
 import javax.swing.*;
 
-public class ChatArea extends JTextArea {
-    public ChatArea() {
+class ChatArea extends JTextArea {
+    ChatArea() {
         super();
         this.setEditable(false);
         this.setLineWrap(true);

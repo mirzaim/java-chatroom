@@ -3,12 +3,12 @@ package com.chatroom.client.view.main;
 import javax.swing.*;
 import java.awt.*;
 
-public class LeftLayout extends JPanel {
+class LeftLayout extends JPanel {
 
     private DefaultListModel model;
     private JList onlinePeople;
 
-    public LeftLayout() {
+    LeftLayout() {
         super(new BorderLayout());
         JLabel label = new JLabel("Online people:");
         this.add(label, BorderLayout.PAGE_START);

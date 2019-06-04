@@ -7,13 +7,13 @@ import javax.swing.*;
 import java.awt.*;
 
 
-public class BottomLayout extends JPanel {
+class BottomLayout extends JPanel {
     private JTextField messageField;
     private JButton sendButton;
     private NewMessageListener newMessageListener;
 
 
-    public BottomLayout() {
+    BottomLayout() {
         super(new BorderLayout());
 
         messageField = new JTextField();

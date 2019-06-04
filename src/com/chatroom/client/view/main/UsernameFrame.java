@@ -3,13 +3,13 @@ package com.chatroom.client.view.main;
 import javax.swing.*;
 import java.awt.*;
 
-public class UsernameFrame extends JPanel {
+class UsernameFrame extends JPanel {
 
     private JTextField nameTextField;
     private JTextField ipTextField;
     private JLabel messageLabel;
 
-    public UsernameFrame() throws HeadlessException {
+    UsernameFrame() throws HeadlessException {
         super();
         this.setLayout(new GridLayout(0, 2));
 
@@ -30,15 +30,15 @@ public class UsernameFrame extends JPanel {
         justForTesting();
     }
 
-    public String getUserName() {
+    String getUserName() {
         return nameTextField.getText();
     }
 
-    public String getIP() {
+    String getIP() {
         return ipTextField.getText();
     }
 
-    public void setMessage(String message) {
+    void setMessage(String message) {
         this.messageLabel.setText(message);
     }
 
