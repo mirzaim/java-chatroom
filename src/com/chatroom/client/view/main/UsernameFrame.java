@@ -2,12 +2,19 @@ package com.chatroom.client.view.main;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.regex.Pattern;
 
 class UsernameFrame extends JPanel {
 
     private JTextField nameTextField;
     private JTextField ipTextField;
     private JLabel messageLabel;
+
+    private static final String IPADDRESS_PATTERN =
+            "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 
     UsernameFrame() throws HeadlessException {
         super();
@@ -40,6 +47,12 @@ class UsernameFrame extends JPanel {
 
     void setMessage(String message) {
         this.messageLabel.setText(message);
+    }
+
+    boolean isInputDataProper() {
+        return !getUserName().isEmpty() &&
+                Pattern.compile(IPADDRESS_PATTERN).matcher(getIP()).matches();
+
     }
 
     private void justForTesting() {

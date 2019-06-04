@@ -4,25 +4,18 @@ import com.chatroom.client.NewMessageListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.regex.Pattern;
+import java.lang.reflect.InvocationTargetException;
 
 public final class ChatRoomGUI extends JFrame {
     private final String TITLE = "ChatRoom";
     private final int WIDTH = 500, HEIGHT = 500;
-    private static final String IPADDRESS_PATTERN =
-            "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 
     private ChatArea chatArea;
     private LeftLayout leftLayout;
     private BottomLayout bottomLayout;
+    private UsernameFrame userData;
 
     private static ChatRoomGUI gui;
-
-    private String username;
-    private String ipAddress;
 
     private ChatRoomGUI() throws HeadlessException {
         super();
@@ -30,9 +23,10 @@ public final class ChatRoomGUI extends JFrame {
         //for better experience
         setLookAndFeel();
 
+        setupGUI();
+
         getUserData();
 
-        setupGUI();
     }
 
     private ChatRoomGUI(NewMessageListener newMessageListener) throws HeadlessException {
@@ -40,7 +34,6 @@ public final class ChatRoomGUI extends JFrame {
 
         setNewMessageListener(newMessageListener);
     }
-
 
 
     public static void initGUI() {
@@ -60,6 +53,11 @@ public final class ChatRoomGUI extends JFrame {
         leftLayout.addUser(username);
     }
 
+    public void addNewParticipants(String[] usernames) {
+        for (String username : usernames)
+            addNewParticipant(username);
+    }
+
     public void removeParticipant(String username) {
         leftLayout.removeUser(username);
     }
@@ -76,12 +74,13 @@ public final class ChatRoomGUI extends JFrame {
         this.setLocationRelativeTo(null);
         this.setResizable(false);
 
-        chatArea = new ChatArea();
-        this.add(new JScrollPane(chatArea), BorderLayout.CENTER);
+        this.add(new JScrollPane(chatArea = new ChatArea()), BorderLayout.CENTER);
 
         this.add(leftLayout = new LeftLayout(), BorderLayout.LINE_START);
 
         this.add(bottomLayout = new BottomLayout(), BorderLayout.PAGE_END);
+
+        this.setVisible(true);
     }
 
     private void setLookAndFeel() {
@@ -99,22 +98,21 @@ public final class ChatRoomGUI extends JFrame {
     }
 
     private void getUserData() {
-        UsernameFrame userData = new UsernameFrame();
+        try {
+            EventQueue.invokeAndWait(() -> {
+                userData = new UsernameFrame();
 
-        while (!isInputDataProper(userData)) {
-            int result = JOptionPane.showConfirmDialog(this, userData,
-                    "Fill The Blanks", JOptionPane.OK_CANCEL_OPTION);
-            if (result == JOptionPane.CANCEL_OPTION)
-                closeApplication();
+                while (!userData.isInputDataProper()) {
+                    int result = JOptionPane.showConfirmDialog(ChatRoomGUI.this, userData,
+                            "Fill The Blanks", JOptionPane.OK_CANCEL_OPTION);
+
+                    if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION)
+                        closeApplication();
+
+                }
+            });
+        } catch (InterruptedException | InvocationTargetException ignored) {
         }
-
-        username = userData.getUserName();
-        ipAddress = userData.getIP();
-    }
-
-    private boolean isInputDataProper(UsernameFrame frame) {
-        return !frame.getUserName().isEmpty() &&
-                Pattern.compile(IPADDRESS_PATTERN).matcher(frame.getIP()).matches();
 
     }
 
@@ -123,10 +121,10 @@ public final class ChatRoomGUI extends JFrame {
     }
 
     public String getUsername() {
-        return username;
+        return userData.getUserName();
     }
 
     public String getIpAddress() {
-        return ipAddress;
+        return userData.getIP();
     }
 }

@@ -12,7 +12,6 @@ public class Main {
     public static void main(String[] args) {
         ChatRoomGUI.initGUI();
         ChatRoomGUI gui = ChatRoomGUI.getGUI();
-        gui.setVisible(true);
 
         try {
             Client client = new Client(gui.getIpAddress(), message -> gui.addNewMessage("me", message));
