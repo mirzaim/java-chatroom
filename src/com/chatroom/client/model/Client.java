@@ -1,7 +1,5 @@
 package com.chatroom.client.model;
 
-import com.chatroom.client.NewMessageListener;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -10,13 +8,13 @@ import java.net.Socket;
 public class Client {
     private static final int PORT = 1234;
 
-    private ListenerToServer serverListener;
+    private ServerListener serverListener;
     private NewMessageListener messageListener;
 
     public Client(String ipAddress, NewMessageListener messageListener) throws IOException {
         Socket socket = new Socket(ipAddress, PORT);
-        new Thread(serverListener = new ListenerToServer(socket)).start();
         this.messageListener = messageListener;
+        new Thread(serverListener = new ServerListener(socket)).start();
     }
 
     public void sendMessage(String message) {
@@ -29,13 +27,13 @@ public class Client {
     }
 
 
-    private class ListenerToServer implements Runnable {
+    private class ServerListener implements Runnable {
         private DataInputStream in;
         private DataOutputStream out;
         private Socket socket;
         private boolean listen = true;
 
-        public ListenerToServer(Socket clientSocket) {
+        private ServerListener(Socket clientSocket) {
             socket = clientSocket;
             try {
                 in = new DataInputStream(socket.getInputStream());
