@@ -6,11 +6,13 @@ import java.util.Calendar;
 
 public abstract class AbstractMessage implements Serializable {
 
+    private MessageType messageType;
     private final String senderUsername;
     private Calendar publishDate;
 
-    protected AbstractMessage(String senderUsername) {
+    protected AbstractMessage(String senderUsername, MessageType messageType) {
         this.senderUsername = senderUsername;
+        this.messageType = messageType;
     }
 
     public void setPublishDate(Calendar publishDate) {
@@ -25,7 +27,11 @@ public abstract class AbstractMessage implements Serializable {
         return publishDate;
     }
 
-    public String getPublishTimeInString(){
+    public MessageType getMessageType() {
+        return messageType;
+    }
+
+    public String getPublishTimeInString() {
         return new SimpleDateFormat("HH:mm").format(publishDate);
     }
 }
