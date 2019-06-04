@@ -70,8 +70,10 @@ public final class ChatRoomGUI extends JFrame {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                guiListener.closeWindowFunc();
-
+                try {
+                    guiListener.closeWindowFunc();
+                } catch (Exception ignored) {
+                }
             }
         });
 

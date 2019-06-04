@@ -24,4 +24,8 @@ public class CommandMessage extends AbstractMessage {
         return commandMessage;
     }
 
+    public CommandType getCommandType() {
+        return commandType;
+    }
+
 }

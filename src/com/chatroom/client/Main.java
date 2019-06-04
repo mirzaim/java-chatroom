@@ -14,7 +14,7 @@ public class Main {
         ChatRoomGUI.initGUI(new GUIListener() {
             @Override
             public void newMessage(String message) {
-                client.sendMessage(message);
+                client.sendTextMessage(message);
             }
 
             @Override
@@ -26,8 +26,8 @@ public class Main {
         gui = ChatRoomGUI.getGUI();
 
         try {
-            client = new Client(gui.getIpAddress(),
-                    message -> gui.addNewMessage("me", message));
+            client = new Client(gui.getUsername(), gui.getIpAddress(),
+                    message -> gui.addNewMessage(message.getSenderUsername(), message.getTextMessage()));
         } catch (IOException e) {
             gui.showErrorAndExit("Can't connect to server.");
         }

@@ -1,5 +1,7 @@
 package com.chatroom.client.model;
 
+import com.chatroom.message.TextMessage;
+
 /**
  * This interface listen to massage come from server.
  *
@@ -12,5 +14,5 @@ public interface NewMessageListener {
      *
      * @param message The message that is received from server
      */
-    void newMessage(String message);
+    void newMessage(TextMessage message);
 }

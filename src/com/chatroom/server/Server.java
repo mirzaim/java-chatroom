@@ -1,8 +1,11 @@
 package com.chatroom.server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import com.chatroom.message.AbstractMessage;
+import com.chatroom.message.CommandMessage;
+import com.chatroom.message.CommandType;
+import com.chatroom.message.TextMessage;
+
+import java.io.*;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -58,10 +61,9 @@ public class Server implements Runnable {
         System.out.println("Server closed.");
     }
 
-    private void broadcast(String message) {
+    private void broadcast(AbstractMessage message) {
         for (ClientHandler clientHandler : clientHandlers)
             clientHandler.sendMessage(message);
-        System.out.println(message);
     }
 
 
@@ -75,53 +77,90 @@ public class Server implements Runnable {
     }
 
     private class ClientHandler implements Runnable {
-        private DataInputStream in;
-        private DataOutputStream out;
+        private ObjectInputStream in;
+        private ObjectOutputStream out;
         private Socket socket;
         private boolean listen = true;
 
         public ClientHandler(Socket clientSocket) {
             socket = clientSocket;
             try {
-                in = new DataInputStream(socket.getInputStream());
-                out = new DataOutputStream(socket.getOutputStream());
+                out = new ObjectOutputStream(socket.getOutputStream());
+                in = new ObjectInputStream(socket.getInputStream());
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
         }
 
+//        @Override
+//        public void run() {
+//            while (listen)
+//                try {
+//                    String message = in.readUTF();
+//                    if (message.equals("CLOSE_CONNECTION")) {
+//                        closeConnection();
+//                        clientHandlers.remove(this);
+//                        System.out.println(this + "closed Connection");
+//                    } else
+//                        broadcast(message);
+//                } catch (IOException e) {
+//                    if (!socket.isClosed())
+//                        e.printStackTrace();
+//                }
+//        }
+
         @Override
         public void run() {
             while (listen)
                 try {
-                    String message = in.readUTF();
-                    if (message.equals("CLOSE_CONNECTION")) {
-                        closeConnection();
-                        clientHandlers.remove(this);
-                        System.out.println(this + "closed Connection");
-                    } else
-                        broadcast(message);
+                    AbstractMessage message = (AbstractMessage) in.readObject();
+                    handleMessage(message);
                 } catch (IOException e) {
                     if (!socket.isClosed())
                         e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
                 }
         }
 
-        void sendMessage(String message) {
+        void sendMessage(AbstractMessage message) {
             try {
-                out.writeUTF(message);
+                out.writeObject(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
         void closeConnection() throws IOException {
-            sendMessage("CLOSE_CONNECTION");
+            sendMessage(new CommandMessage(CommandType.CLOSE_CONNECTION));
             listen = false;
             in.close();
             out.close();
             socket.close();
+        }
+
+        private void handleMessage(AbstractMessage message) throws IOException {
+            switch (message.getMessageType()) {
+                case TEXT_MESSAGE:
+                    broadcast(message);
+                    break;
+                case COMMAND_MESSAGE:
+                    handleCommandMessage((CommandMessage) message);
+                    break;
+            }
+        }
+
+        private void handleCommandMessage(CommandMessage message) throws IOException {
+            switch (message.getCommandType()) {
+                case CLOSE_CONNECTION:
+                    closeConnection();
+                    clientHandlers.remove(this);
+                    System.out.println(this + "closed Connection");
+                    break;
+                case ADD_ONLINE_USERS:
+                    break;
+            }
         }
 
         @Override
