@@ -82,7 +82,7 @@ public class Server implements Runnable {
         private Socket socket;
         private boolean listen = true;
 
-        public ClientHandler(Socket clientSocket) {
+        private ClientHandler(Socket clientSocket) {
             socket = clientSocket;
             try {
                 out = new ObjectOutputStream(socket.getOutputStream());
@@ -92,23 +92,6 @@ public class Server implements Runnable {
             }
 
         }
-
-//        @Override
-//        public void run() {
-//            while (listen)
-//                try {
-//                    String message = in.readUTF();
-//                    if (message.equals("CLOSE_CONNECTION")) {
-//                        closeConnection();
-//                        clientHandlers.remove(this);
-//                        System.out.println(this + "closed Connection");
-//                    } else
-//                        broadcast(message);
-//                } catch (IOException e) {
-//                    if (!socket.isClosed())
-//                        e.printStackTrace();
-//                }
-//        }
 
         @Override
         public void run() {
@@ -124,7 +107,7 @@ public class Server implements Runnable {
                 }
         }
 
-        void sendMessage(AbstractMessage message) {
+        private void sendMessage(AbstractMessage message) {
             try {
                 out.writeObject(message);
             } catch (IOException e) {
@@ -132,7 +115,7 @@ public class Server implements Runnable {
             }
         }
 
-        void closeConnection() throws IOException {
+        private void closeConnection() throws IOException {
             sendMessage(new CommandMessage(CommandType.CLOSE_CONNECTION));
             listen = false;
             in.close();
